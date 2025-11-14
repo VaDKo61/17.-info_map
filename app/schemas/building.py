@@ -6,3 +6,8 @@ class BuildingBase(BaseModel):
     latitude: float
     longitude: float
     organization: list['Organization']
+
+
+class BuildingOrganizationsResponse(BaseModel):
+    building_id: int
+    organizations: list['OrganizationRead']
