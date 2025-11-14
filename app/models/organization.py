@@ -14,6 +14,9 @@ class Organization(Base):
         'OrganizationPhone', back_populates='organization', cascade='all, delete-orphan'
     )
 
+    building_id: Mapped[int] = mapped_column(ForeignKey('buildings_id'))
+    building: Mapped['Building'] = relationship('Building', back_populates='organizations')
+
 
 class OrganizationPhone(Base):
     __tablename__ = 'organization_phones'
