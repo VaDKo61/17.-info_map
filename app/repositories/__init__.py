@@ -1,4 +1,4 @@
-from organization import OrganizationRepository
+from .organization import OrganizationRepository
 
 __all__ = [
     'OrganizationRepository',

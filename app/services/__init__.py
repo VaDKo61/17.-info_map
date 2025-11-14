@@ -1,4 +1,4 @@
-from organization import OrganizationService
+from .organization import OrganizationService
 
 __all__ = [
     'OrganizationService',
