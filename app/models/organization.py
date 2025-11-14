@@ -21,7 +21,7 @@ class Organization(Base):
         'OrganizationPhone', back_populates='organization', cascade='all, delete-orphan'
     )
 
-    building_id: Mapped[int] = mapped_column(ForeignKey('buildings_id'))
+    building_id: Mapped[int] = mapped_column(ForeignKey('buildings.id'))
     building: Mapped['Building'] = relationship('Building', back_populates='organizations')
 
     activities: Mapped[list['Activity']] = relationship(
