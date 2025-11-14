@@ -3,6 +3,13 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from core.database import Base
 
+organization_activity_table = Table(
+    'organization_activity',
+    Base.metadata,
+    Column('organization_id', ForeignKey('organizations.id'), primary_key=True),
+    Column('activity_id', ForeignKey('activities.id'), primary_key=True),
+)
+
 
 class Organization(Base):
     __tablename__ = 'organizations'
@@ -16,6 +23,12 @@ class Organization(Base):
 
     building_id: Mapped[int] = mapped_column(ForeignKey('buildings_id'))
     building: Mapped['Building'] = relationship('Building', back_populates='organizations')
+
+    activities: Mapped[list['Activity']] = relationship(
+        'Activity',
+        secondary=organization_activity_table,
+        back_populates='organizations'
+    )
 
 
 class OrganizationPhone(Base):
