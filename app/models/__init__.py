@@ -1,6 +1,6 @@
-from activity import Activity
-from building import Building
-from organization import Organization
+from .activity import Activity
+from .building import Building
+from .organization import Organization
 
 __all__ = [
     'Activity',
