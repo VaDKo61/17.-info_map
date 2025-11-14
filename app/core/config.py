@@ -1,10 +1,10 @@
 from pydantic import BaseModel
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RunConfig(BaseModel):
     host: str = '127.0.0.1'
-    port: int = 8020
+    port: int = 8000
 
 
 class ApiPrefix(BaseModel):
@@ -12,7 +12,7 @@ class ApiPrefix(BaseModel):
 
 
 class DataBaseConfig(BaseModel):
-    url: str = 'sqlite+aiosqlite:///./data.db'
+    url: str = ''
     echo: bool = False
     echo_pool: bool = False
     pool_size: int = 50
@@ -20,6 +20,12 @@ class DataBaseConfig(BaseModel):
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        case_sensitive=False,
+        env_nested_delimiter='__',
+        env_prefix='APP_CONFIG__'
+    )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     db: DataBaseConfig = DataBaseConfig()
