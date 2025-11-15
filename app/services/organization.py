@@ -75,9 +75,9 @@ class OrganizationService:
 
         activity_ids = await ActivityRepository.get_child_ids(session, activity.id)
 
-        organizations = await OrganizationRepository.get_by_activity_ids(
+        organizations = await OrganizationRepository.get_by_activity_id(
             session=session,
-            activity_ids=activity_ids
+            activity_id=activity_ids
         )
 
         return organizations
