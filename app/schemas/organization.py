@@ -1,13 +1,19 @@
 from pydantic import BaseModel
 
-from models import Activity, OrganizationPhone
+
+class OrganizationPhoneBase(BaseModel):
+    phone_number: str
 
 
 class OrganizationBase(BaseModel):
     name: str
-    phones: list[OrganizationPhone]
-    activities: list[Activity]
+    phones: list[OrganizationPhoneBase]
 
 
 class OrganizationRead(OrganizationBase):
     id: int
+
+
+class BuildingOrganizationsResponse(BaseModel):
+    building_id: int
+    organizations: list[OrganizationRead]
