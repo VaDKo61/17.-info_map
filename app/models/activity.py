@@ -16,7 +16,7 @@ class Activity(Base):
     parent: Mapped['Activity'] = relationship('Activity', remote_side=[id], back_populates='children')
     children: Mapped[list['Activity']] = relationship('Activity', back_populates='parent')
 
-    organization: Mapped[list['Organization']] = relationship(
+    organizations: Mapped[list['Organization']] = relationship(
         'Organization',
         secondary=organization_activity_table,
         back_populates='activities'
