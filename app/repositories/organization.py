@@ -74,3 +74,23 @@ class OrganizationRepository:
 
         result = await session.execute(query)
         return list(result.scalars().all())
+
+    @staticmethod
+    async def search_by_name(
+            session: AsyncSession,
+            name: str
+    ) -> list[Organization]:
+        query = (
+            select(Organization)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities),
+                selectinload(Organization.activities).selectinload(Activity.children),
+                selectinload(Organization.activities).selectinload(Activity.parent),
+                selectinload(Organization.building),
+            )
+            .where(Organization.name.ilike(f'%{name}%'))
+        )
+
+        result = await session.execute(query)
+        return list(result.scalars().unique().all())
