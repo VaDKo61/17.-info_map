@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from pydantic import BaseModel, ConfigDict
-from .activity import ActivityBase
+from .activity import ActivityRead
 
 
 class OrganizationPhoneBase(BaseModel):
@@ -13,7 +11,7 @@ class OrganizationPhoneBase(BaseModel):
 class OrganizationBase(BaseModel):
     name: str
     phones: list[OrganizationPhoneBase]
-    activities: list['ActivityBase']
+    activities: list['ActivityRead']
 
     model_config = ConfigDict(from_attributes=True)
 
