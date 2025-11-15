@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from repositories import BuildingRepository
+from repositories import BuildingRepository, OrganizationRepository
 
 
 def _haversine(lat1, lng1, lat2, lng2) -> float:
@@ -43,4 +43,11 @@ class BuildingService:
         if not buildings:
             raise HTTPException(status_code=404, detail='Здания с организациями не найдены')
 
-        return buildings
+        building_ids = [b.id for b in buildings]
+        organizations_nested = [
+            await OrganizationRepository.get_by_building_id(session, building_id)
+            for building_id in building_ids
+        ]
+        organizations = [org for sublist in organizations_nested for org in sublist]
+
+        return buildings, organizations
