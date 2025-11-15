@@ -17,6 +17,7 @@ class OrganizationRepository:
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
                 selectinload(Organization.activities, Activity.children),
+                selectinload(Organization.activities, Activity.parent),
                 selectinload(Organization.building),
             )
             .where(Organization.building_id == building_id)
@@ -36,6 +37,7 @@ class OrganizationRepository:
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
                 selectinload(Organization.activities, Activity.children),
+                selectinload(Organization.activities, Activity.parent),
                 selectinload(Organization.building),
             )
             .where(Activity.id == activity_id)
