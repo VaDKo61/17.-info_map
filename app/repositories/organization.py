@@ -13,7 +13,6 @@ class OrganizationRepository:
     ) -> list[Organization]:
         query = (
             select(Organization)
-            .join(Building)
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
