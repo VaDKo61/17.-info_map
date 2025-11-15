@@ -40,3 +40,19 @@ class OrganizationService:
             )
 
         return organizations
+
+    @staticmethod
+    async def get_organizations(
+            session: AsyncSession
+    ):
+        organizations = await OrganizationRepository.get_organization(
+            session,
+        )
+
+        if not organizations:
+            raise HTTPException(
+                status_code=404,
+                detail=f'Организации не найдены'
+            )
+
+        return organizations
