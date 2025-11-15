@@ -24,3 +24,22 @@ class OrganizationRepository:
 
         result = await session.execute(query)
         return list(result.scalars().all())
+
+    @staticmethod
+    async def get_by_activity_id(
+            session: AsyncSession,
+            activity_id: int
+    ) -> list[Organization]:
+        query = (
+            select(Organization)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities),
+                selectinload(Organization.activities, Activity.children),
+                selectinload(Organization.building),
+            )
+            .where(Activity.id == activity_id)
+        )
+
+        result = await session.execute(query)
+        return list(result.scalars().all())
