@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from repositories import OrganizationRepository
+from repositories import OrganizationRepository, ActivityRepository
 
 
 class OrganizationService:
@@ -54,5 +54,30 @@ class OrganizationService:
                 status_code=404,
                 detail=f'Организации не найдены'
             )
+
+        return organizations
+
+    @staticmethod
+    async def get_by_activity_name(
+            name: str,
+            session: AsyncSession
+    ):
+        activity = await ActivityRepository.get_by_name(
+            session,
+            name
+        )
+
+        if not activity:
+            raise HTTPException(
+                status_code=404,
+                detail=f'Организации {name} не найдены'
+            )
+
+        activity_ids = await ActivityRepository.get_child_ids(session, activity.id)
+
+        organizations = await OrganizationRepository.get_by_activity_ids(
+            session=session,
+            activity_ids=activity_ids
+        )
 
         return organizations
