@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
-from models import Organization
-from models import Building
+from models import Organization, Activity
 
 
 class OrganizationRepository:
@@ -13,8 +13,13 @@ class OrganizationRepository:
     ) -> list[Organization]:
         query = (
             select(Organization)
-            .join(Building, Building.id == Organization.building_id)
-            .where(Building.id == building_id)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities),
+                selectinload(Organization.activities, Activity.children),
+                selectinload(Organization.building),
+            )
+            .where(Organization.building_id == building_id)
         )
 
         result = await session.execute(query)
