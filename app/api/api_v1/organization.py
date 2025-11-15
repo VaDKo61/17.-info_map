@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import db_helper
-from schemas import BuildingOrganizationsResponse, ActivityOrganizationsResponse
+from schemas import BuildingOrganizationsResponse, ActivityOrganizationsResponse, OrganizationWithBuilding
 from services import OrganizationService
 
 router = APIRouter(tags=['organizations'])
@@ -43,3 +43,16 @@ async def get_organizations_by_activity(
         activity_id=activity_id,
         organizations=organizations
     )
+
+
+@router.get(
+    '',
+    response_model=list[OrganizationWithBuilding]
+)
+async def get_organizations(
+        session: AsyncSession = Depends(db_helper.session_getter)
+):
+    organizations = await OrganizationService.get_organizations(
+        session
+    )
+    return organizations
