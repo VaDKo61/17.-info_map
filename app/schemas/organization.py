@@ -1,4 +1,6 @@
 from pydantic import BaseModel, ConfigDict
+
+from .building import BuildingRead
 from .activity import ActivityRead
 
 
@@ -29,6 +31,13 @@ class BuildingOrganizationsResponse(BaseModel):
 
 class ActivityOrganizationsResponse(BaseModel):
     activity_id: int
+    organizations: list[OrganizationRead]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class BuildingsAndOrganizationsResponse(BaseModel):
+    buildings: list[BuildingRead]
     organizations: list[OrganizationRead]
 
     model_config = ConfigDict(from_attributes=True)
