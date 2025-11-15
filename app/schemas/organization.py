@@ -22,6 +22,10 @@ class OrganizationRead(OrganizationBase):
     id: int
 
 
+class OrganizationWithBuilding(OrganizationRead):
+    building: BuildingRead
+
+
 class BuildingOrganizationsResponse(BaseModel):
     building_id: int
     organizations: list[OrganizationRead]
@@ -38,6 +42,6 @@ class ActivityOrganizationsResponse(BaseModel):
 
 class BuildingsAndOrganizationsResponse(BaseModel):
     buildings: list[BuildingRead]
-    organizations: list[OrganizationRead]
+    organizations: list[OrganizationWithBuilding]
 
     model_config = ConfigDict(from_attributes=True)

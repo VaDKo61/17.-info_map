@@ -1,8 +1,9 @@
 from .organization import BuildingOrganizationsResponse, ActivityOrganizationsResponse, \
-    BuildingsAndOrganizationsResponse
+    BuildingsAndOrganizationsResponse, OrganizationWithBuilding
 
 __all__ = [
     'BuildingOrganizationsResponse',
     'ActivityOrganizationsResponse',
     'BuildingsAndOrganizationsResponse',
+    'OrganizationWithBuilding',
 ]
