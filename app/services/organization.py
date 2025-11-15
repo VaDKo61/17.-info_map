@@ -81,3 +81,20 @@ class OrganizationService:
         )
 
         return organizations
+
+    @staticmethod
+    async def search_by_name(
+            name: str,
+            session: AsyncSession
+    ):
+        organizations = await OrganizationRepository.search_by_name(
+            session=session,
+            name=name
+        )
+
+        if not organizations:
+            raise HTTPException(
+                status_code=404,
+                detail=f'Организации с именем: {name} не найдены'
+            )
+        return organizations
