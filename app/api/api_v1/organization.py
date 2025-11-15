@@ -73,3 +73,16 @@ async def get_organizations_by_activity(
     )
 
 
+@router.get(
+    '/search',
+    response_model=list[OrganizationWithBuilding]
+)
+async def search_organizations(
+        name: str,
+        session: AsyncSession = Depends(db_helper.session_getter)
+):
+    organizations = await OrganizationService.search_by_name(
+        session=session,
+        name=name
+    )
+    return organizations
