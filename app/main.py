@@ -1,10 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from core.config import settings
 from api import router as api_router
+from core.security import verify_api_key
 
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(verify_api_key)])
 
 app.include_router(api_router)
 
