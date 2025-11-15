@@ -12,4 +12,4 @@ class Building(Base):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
 
-    organization: Mapped[list['Organization']] = relationship('Organization', back_populates='building')
+    organizations: Mapped[list['Organization']] = relationship('Organization', back_populates='building')
