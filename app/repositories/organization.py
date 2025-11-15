@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from models import Organization, Activity
+from models import Organization, Activity, Building
 
 
 class OrganizationRepository:
@@ -13,6 +13,7 @@ class OrganizationRepository:
     ) -> list[Organization]:
         query = (
             select(Organization)
+            .join(Building)
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
@@ -31,17 +32,27 @@ class OrganizationRepository:
             session: AsyncSession,
             activity_id: int
     ) -> list[Organization]:
+        activity = await session.get(
+            Activity,
+            activity_id,
+            options=[selectinload(Activity.children)]
+        )
+        activity_ids = [activity.id] + [child.id for child in activity.children]
+
         query = (
             select(Organization)
+            .join(Organization.activities)
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
-                selectinload(Organization.activities, Activity.children),
-                selectinload(Organization.activities, Activity.parent),
+                selectinload(Organization.activities).selectinload(Activity.children),
+                selectinload(Organization.activities).selectinload(Activity.parent),
                 selectinload(Organization.building),
             )
-            .where(Activity.id == activity_id)
+            .where(Activity.id.in_(activity_ids))
+
         )
 
         result = await session.execute(query)
-        return list(result.scalars().all())
+
+        return list(result.scalars().unique().all())
