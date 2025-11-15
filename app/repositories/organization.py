@@ -55,3 +55,21 @@ class OrganizationRepository:
         result = await session.execute(query)
 
         return list(result.scalars().unique().all())
+
+    @staticmethod
+    async def get_organization(
+            session: AsyncSession,
+    ) -> list[Organization]:
+        query = (
+            select(Organization)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities),
+                selectinload(Organization.activities, Activity.children),
+                selectinload(Organization.activities, Activity.parent),
+                selectinload(Organization.building),
+            )
+        )
+
+        result = await session.execute(query)
+        return list(result.scalars().all())
