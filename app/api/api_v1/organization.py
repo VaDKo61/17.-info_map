@@ -41,6 +41,21 @@ async def get_organizations_by_building(
 
 
 @router.get(
+    '/by-activity/search',
+    response_model=list[OrganizationWithBuilding]
+)
+async def search_organizations_by_activity(
+        name: str = Query(..., description="Название вида деятельности, например 'Еда'"),
+        session: AsyncSession = Depends(db_helper.session_getter)
+):
+    organizations = await OrganizationService.get_by_activity_name(
+        name=name,
+        session=session
+    )
+    return organizations
+
+
+@router.get(
     '/by-activity/{activity_id}',
     response_model=ActivityOrganizationsResponse
 )
@@ -58,16 +73,3 @@ async def get_organizations_by_activity(
     )
 
 
-@router.get(
-    '/search',
-    response_model=list[OrganizationWithBuilding]
-)
-async def search_organizations_by_activity(
-        name: str = Query(None, description="Название вида деятельности, например 'Еда'"),
-        session: AsyncSession = Depends(db_helper.session_getter)
-):
-    organizations = await OrganizationService.get_by_activity_name(
-        name=name,
-        session=session
-    )
-    return organizations
