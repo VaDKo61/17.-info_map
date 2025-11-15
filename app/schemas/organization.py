@@ -25,3 +25,10 @@ class BuildingOrganizationsResponse(BaseModel):
     organizations: list[OrganizationRead]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ActivityOrganizationsResponse(BaseModel):
+    activity_id: int
+    organizations: list[OrganizationRead]
+
+    model_config = ConfigDict(from_attributes=True)
