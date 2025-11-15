@@ -57,6 +57,26 @@ class OrganizationRepository:
         return list(result.scalars().unique().all())
 
     @staticmethod
+    async def get_by_activity_ids(
+            session: AsyncSession,
+            activity_ids: list[int]
+    ) -> list[Organization]:
+        query = (
+            select(Organization)
+            .join(Organization.activities)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities).selectinload(Activity.children),
+                selectinload(Organization.activities).selectinload(Activity.parent),
+                selectinload(Organization.building)
+            )
+            .where(Activity.id.in_(activity_ids))
+        )
+
+        result = await session.execute(query)
+        return list(result.scalars().unique().all())
+
+    @staticmethod
     async def get_organization(
             session: AsyncSession,
     ) -> list[Organization]:
