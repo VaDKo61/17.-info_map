@@ -18,7 +18,7 @@ class OrganizationService:
         if not organizations:
             raise HTTPException(
                 status_code=404,
-                detail=f'Здание {building_id} не найдено'
+                detail=f'Здание с id: {building_id} не найдено'
             )
 
         return organizations
@@ -36,7 +36,7 @@ class OrganizationService:
         if not organizations:
             raise HTTPException(
                 status_code=404,
-                detail=f'Организации {activity_id} не найдены'
+                detail=f'Организации с деятельностью id: {activity_id} не найдены'
             )
 
         return organizations
@@ -70,7 +70,7 @@ class OrganizationService:
         if not activity:
             raise HTTPException(
                 status_code=404,
-                detail=f'Организации {name} не найдены'
+                detail=f'Организации с деятельностью: {name} не найдены'
             )
 
         activity_ids = await ActivityRepository.get_child_ids(session, activity.id)

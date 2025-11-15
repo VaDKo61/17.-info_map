@@ -41,7 +41,7 @@ class BuildingService:
             buildings = [b for b in buildings if _haversine(lat, lng, b.latitude, b.longitude) <= radius]
 
         if not buildings:
-            raise HTTPException(status_code=404, detail='Здания с организациями не найдены')
+            raise HTTPException(status_code=404, detail='Здания с организациями c заданными параметрами не найдены')
 
         building_ids = [b.id for b in buildings]
         organizations_nested = [
