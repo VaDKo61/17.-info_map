@@ -3,6 +3,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.database import Base
 
+from .organization import organization_activity_table
+
 
 class Activity(Base):
     __tablename__ = 'activities'
@@ -16,6 +18,6 @@ class Activity(Base):
 
     organization: Mapped[list['Organization']] = relationship(
         'Organization',
-        secondary='organization_activity_table',
+        secondary=organization_activity_table,
         back_populates='activities'
     )
