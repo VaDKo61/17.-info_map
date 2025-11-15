@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import db_helper
-from schemas import BuildingRead
+from schemas import BuildingsAndOrganizationsResponse
 from services import BuildingService
 
 router = APIRouter(tags=['buildings'])
@@ -10,9 +10,9 @@ router = APIRouter(tags=['buildings'])
 
 @router.get(
     '/search_area',
-    response_model=list[BuildingRead]
+    response_model=BuildingsAndOrganizationsResponse
 )
-async def search_buildings(
+async def get_buildings_by_area(
         lat: float | None = Query(None),
         lng: float | None = Query(None),
         radius: float | None = Query(None, description='в км'),
@@ -22,7 +22,7 @@ async def search_buildings(
         lng_max: float | None = Query(None),
         session: AsyncSession = Depends(db_helper.session_getter)
 ):
-    return await BuildingService.get_buildings_from_area(
+    buildings, organizations = await BuildingService.get_buildings_from_area(
         session=session,
         lat=lat,
         lng=lng,
@@ -31,4 +31,9 @@ async def search_buildings(
         lat_max=lat_max,
         lng_min=lng_min,
         lng_max=lng_max
+    )
+
+    return BuildingsAndOrganizationsResponse(
+        buildings=buildings,
+        organizations=organizations
     )

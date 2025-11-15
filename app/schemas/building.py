@@ -8,6 +8,8 @@ class BuildingBase(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class BuildingRead(BuildingBase):
     id: int
 
+    model_config = ConfigDict(from_attributes=True)
