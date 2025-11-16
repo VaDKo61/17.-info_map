@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
 from models import Organization, Activity
 
@@ -43,8 +43,6 @@ class OrganizationRepository:
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
-                selectinload(Organization.activities).selectinload(Activity.children),
-                selectinload(Organization.activities).selectinload(Activity.parent),
                 selectinload(Organization.building),
             )
             .where(Activity.id.in_(activity_id))
@@ -56,9 +54,10 @@ class OrganizationRepository:
         return list(result.scalars().unique().all())
 
     @staticmethod
-    async def get_organization(
+    async def get_by_organization_id(
             session: AsyncSession,
-    ) -> list[Organization]:
+            organization_id: int
+    ) -> Organization:
         query = (
             select(Organization)
             .options(
@@ -66,10 +65,11 @@ class OrganizationRepository:
                 selectinload(Organization.activities),
                 joinedload(Organization.building),
             )
+            .where(Organization.id == organization_id)
         )
 
         result = await session.execute(query)
-        return list(result.scalars().all())
+        return result.scalars().first()
 
     @staticmethod
     async def search_by_name(
