@@ -13,10 +13,12 @@ router = APIRouter(tags=['organizations'])
     response_model=list[OrganizationWithBuilding]
 )
 async def get_organizations(
+        organization_id: int,
         session: AsyncSession = Depends(db_helper.session_getter)
 ):
-    organizations = await OrganizationService.get_organizations(
-        session
+    organizations = await OrganizationService.get_by_organization_id(
+        organization_id,
+        session,
     )
     return organizations
 
