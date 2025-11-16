@@ -37,7 +37,6 @@ Swagger будет доступно на `http://localhost:8000/docs`.
 
 ```bash
 docker exec -it info_map_backend bash
-alembic revision --autogenerate -m "initial"
 alembic upgrade head
 python seed.py
 ```
