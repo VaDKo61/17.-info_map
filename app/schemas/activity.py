@@ -9,7 +9,5 @@ class ActivityBase(BaseModel):
 
 class ActivityRead(ActivityBase):
     id: int
-    parent: ActivityBase | None
-    children: list['ActivityBase']
 
     model_config = ConfigDict(from_attributes=True)
