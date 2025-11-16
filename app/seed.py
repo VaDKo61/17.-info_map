@@ -18,19 +18,28 @@ async def seed():
             longitude=37.6200
         )
 
-        session.add_all([building1, building2])
+        building3 = Building(
+            address='г. Ростов-на-Дону, ул. Текучева 15, офис 15',
+            latitude=75.7600,
+            longitude=57.6200
+        )
+
+        session.add_all([building1, building2, building3])
         await session.flush()
 
         root_service1 = Activity(name='Еда')
         meat_product = Activity(name='Мясная продукция', parent=root_service1)
         dairy_product = Activity(name='Молочная продукция', parent=root_service1)
+        sausage_product = Activity(name='Колбасы', parent=meat_product)
+        type_sausage = Activity(name='Сыро-копченые', parent=sausage_product)
+        sausage = Activity(name='Венская', parent=type_sausage)
 
         root_service2 = Activity(name='Автомобили')
         freight = Activity(name='Грузовые', parent=root_service2)
 
         session.add_all([
             root_service1,
-            meat_product, dairy_product,
+            meat_product, dairy_product, sausage_product, type_sausage, sausage,
             root_service2,
             freight
         ])
@@ -56,7 +65,16 @@ async def seed():
             ]
         )
 
-        session.add_all([org1, org2])
+        org3 = Organization(
+            name='Колбасы',
+            building_id=building3.id,
+            activities=[sausage],
+            phones=[
+                OrganizationPhone(phone_number='+7 900 235-33-33'),
+            ]
+        )
+
+        session.add_all([org1, org2, org3])
 
         await session.commit()
 
