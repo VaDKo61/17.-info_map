@@ -1,7 +1,13 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String, Integer, ForeignKey, Table, Column
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from core.database import Base
+
+if TYPE_CHECKING:
+    from .building import Building
+    from .activity import Activity
 
 organization_activity_table = Table(
     'organization_activity',
@@ -22,7 +28,10 @@ class Organization(Base):
     )
 
     building_id: Mapped[int] = mapped_column(ForeignKey('buildings.id'))
-    building: Mapped['Building'] = relationship('Building', back_populates='organizations')
+    building: Mapped['Building'] = relationship(
+        'Building',
+        back_populates='organizations'
+    )
 
     activities: Mapped[list['Activity']] = relationship(
         'Activity',
@@ -38,4 +47,7 @@ class OrganizationPhone(Base):
     phone_number: Mapped[str] = mapped_column(String(50), nullable=False)
 
     organization_id: Mapped[int] = mapped_column(ForeignKey('organizations.id'))
-    organization: Mapped['Organization'] = relationship('Organization', back_populates='phones')
+    organization: Mapped['Organization'] = relationship(
+        'Organization',
+        back_populates='phones'
+    )

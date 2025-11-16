@@ -11,7 +11,8 @@ router = APIRouter(tags=['buildings'])
 @router.get(
     '/search_area',
     response_model=BuildingsAndOrganizationsResponse,
-    description='Список организаций и список зданий, которые находятся в заданном радиусе/прямоугольной области'
+    description='Список организаций и список зданий,'
+                ' которые находятся в заданном радиусе/прямоугольной области'
 )
 async def get_buildings_by_area(
         lat: float | None = Query(None),

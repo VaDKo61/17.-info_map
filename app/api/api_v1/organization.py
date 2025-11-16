@@ -2,7 +2,11 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import db_helper
-from schemas import BuildingOrganizationsResponse, ActivityOrganizationsResponse, OrganizationWithBuilding
+from schemas import (
+    BuildingOrganizationsResponse,
+    ActivityOrganizationsResponse,
+    OrganizationWithBuilding
+)
 from services import OrganizationService
 
 router = APIRouter(tags=['organizations'])
@@ -50,7 +54,10 @@ async def get_organizations_by_building(
     description='Поиск организации по виду деятельности'
 )
 async def search_organizations_by_activity(
-        name: str = Query(..., description="Название вида деятельности, например 'Еда'"),
+        name: str = Query(
+            ...,
+            description="Название вида деятельности, например 'Еда'"
+        ),
         session: AsyncSession = Depends(db_helper.session_getter)
 ):
     organizations = await OrganizationService.get_by_activity_name(

@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Integer, String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.database import Base
+
+if TYPE_CHECKING:
+    from .organization import Organization
 
 
 class Building(Base):
@@ -12,4 +17,7 @@ class Building(Base):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
 
-    organizations: Mapped[list['Organization']] = relationship('Organization', back_populates='building')
+    organizations: Mapped[list['Organization']] = relationship(
+        'Organization',
+        back_populates='building'
+    )
