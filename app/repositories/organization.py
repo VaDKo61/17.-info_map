@@ -35,6 +35,8 @@ class OrganizationRepository:
                 activity_id,
                 options=[selectinload(Activity.children)]
             )
+            if not activity:
+                return []
             activity_id = [activity.id] + [child.id for child in activity.children]
 
         query = (
