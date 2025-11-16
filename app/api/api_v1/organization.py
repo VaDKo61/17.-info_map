@@ -10,7 +10,8 @@ router = APIRouter(tags=['organizations'])
 
 @router.get(
     '',
-    response_model=list[OrganizationWithBuilding]
+    response_model=OrganizationWithBuilding,
+    description='Вывод информации об организации по её идентификатору'
 )
 async def get_organizations(
         organization_id: int,
@@ -25,7 +26,8 @@ async def get_organizations(
 
 @router.get(
     '/by-building/{building_id}',
-    response_model=BuildingOrganizationsResponse
+    response_model=BuildingOrganizationsResponse,
+    description='Список всех организаций находящихся в конкретном здании'
 )
 async def get_organizations_by_building(
         building_id: int,
@@ -44,7 +46,8 @@ async def get_organizations_by_building(
 
 @router.get(
     '/by-activity/search',
-    response_model=list[OrganizationWithBuilding]
+    response_model=list[OrganizationWithBuilding],
+    description='Поиск организации по виду деятельности'
 )
 async def search_organizations_by_activity(
         name: str = Query(..., description="Название вида деятельности, например 'Еда'"),
@@ -59,7 +62,8 @@ async def search_organizations_by_activity(
 
 @router.get(
     '/by-activity/{activity_id}',
-    response_model=ActivityOrganizationsResponse
+    response_model=ActivityOrganizationsResponse,
+    description='Список организаций по виду деятельности'
 )
 async def get_organizations_by_activity(
         activity_id: int,
@@ -77,7 +81,8 @@ async def get_organizations_by_activity(
 
 @router.get(
     '/search',
-    response_model=list[OrganizationWithBuilding]
+    response_model=list[OrganizationWithBuilding],
+    description='Поиск организации по названию'
 )
 async def search_organizations(
         name: str,
