@@ -16,8 +16,6 @@ class OrganizationRepository:
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
-                selectinload(Organization.activities, Activity.children),
-                selectinload(Organization.activities, Activity.parent),
                 selectinload(Organization.building),
             )
             .where(Organization.building_id == building_id)
@@ -66,9 +64,7 @@ class OrganizationRepository:
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
-                selectinload(Organization.activities, Activity.children),
-                selectinload(Organization.activities, Activity.parent),
-                selectinload(Organization.building),
+                joinedload(Organization.building),
             )
         )
 
@@ -85,8 +81,6 @@ class OrganizationRepository:
             .options(
                 selectinload(Organization.phones),
                 selectinload(Organization.activities),
-                selectinload(Organization.activities).selectinload(Activity.children),
-                selectinload(Organization.activities).selectinload(Activity.parent),
                 selectinload(Organization.building),
             )
             .where(Organization.name.ilike(f'%{name}%'))
