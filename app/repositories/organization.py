@@ -32,8 +32,7 @@ class OrganizationRepository:
         if isinstance(activity_id, int):
             activity = await session.get(
                 Activity,
-                activity_id,
-                options=[selectinload(Activity.children)]
+                activity_id
             )
             if not activity:
                 return []
