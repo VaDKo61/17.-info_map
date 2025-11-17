@@ -37,7 +37,7 @@ class OrganizationRepository:
             )
             if not activity:
                 return []
-            activity_id = [activity.id] + [child.id for child in activity.children]
+            activity_id = [activity.id]
 
         query = (
             select(Organization)
