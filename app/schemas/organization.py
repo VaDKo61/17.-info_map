@@ -1,7 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
-from .building import BuildingRead
 from .activity import ActivityRead
+from .building import BuildingRead
 
 
 class OrganizationPhoneBase(BaseModel):
@@ -13,13 +13,23 @@ class OrganizationPhoneBase(BaseModel):
 class OrganizationBase(BaseModel):
     name: str
     phones: list[OrganizationPhoneBase]
-    activities: list['ActivityRead']
+    activities: list["ActivityRead"]
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationRead(OrganizationBase):
     id: int
+
+
+class OrganizationPaginatedResponse(BaseModel):
+    items: list[OrganizationRead]
+    total: int = Field(..., ge=0)
+    page: int = Field(..., ge=0)
+    page_size: int = Field(..., ge=0)
+    page_count: int = Field(..., ge=0)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationWithBuilding(OrganizationRead):

@@ -1,15 +1,13 @@
+from models import Activity, Organization
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload, joinedload
-
-from models import Organization, Activity
+from sqlalchemy.orm import joinedload, selectinload
 
 
 class OrganizationRepository:
     @staticmethod
     async def get_by_building_id(
-            session: AsyncSession,
-            building_id: int
+        session: AsyncSession, building_id: int
     ) -> list[Organization]:
         query = (
             select(Organization)
@@ -26,14 +24,10 @@ class OrganizationRepository:
 
     @staticmethod
     async def get_by_activity_id(
-            session: AsyncSession,
-            activity_id: int | list[int]
+        session: AsyncSession, activity_id: int | list[int]
     ) -> list[Organization]:
         if isinstance(activity_id, int):
-            activity = await session.get(
-                Activity,
-                activity_id
-            )
+            activity = await session.get(Activity, activity_id)
             if not activity:
                 return []
             activity_id = [activity.id]
@@ -47,7 +41,6 @@ class OrganizationRepository:
                 selectinload(Organization.building),
             )
             .where(Activity.id.in_(activity_id))
-
         )
 
         result = await session.execute(query)
@@ -55,9 +48,37 @@ class OrganizationRepository:
         return list(result.scalars().unique().all())
 
     @staticmethod
+    async def get_all_organizations(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> list[Organization]:
+        stmt = (
+            select(Organization)
+            .options(
+                selectinload(Organization.phones),
+                selectinload(Organization.activities),
+                joinedload(Organization.building),
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+
+        return list((await session.scalars(stmt)).all())
+
+    @staticmethod
+    async def count_all(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> int | None:
+        stmt = select(func.count()).select_from(Organization).offset(skip).limit(limit)
+
+        return await session.scalar(stmt)
+
+    @staticmethod
     async def get_by_organization_id(
-            session: AsyncSession,
-            organization_id: int
+        session: AsyncSession, organization_id: int
     ) -> Organization:
         query = (
             select(Organization)
@@ -73,10 +94,7 @@ class OrganizationRepository:
         return result.scalars().first()
 
     @staticmethod
-    async def search_by_name(
-            session: AsyncSession,
-            name: str
-    ) -> list[Organization]:
+    async def search_by_name(session: AsyncSession, name: str) -> list[Organization]:
         query = (
             select(Organization)
             .options(
@@ -84,7 +102,7 @@ class OrganizationRepository:
                 selectinload(Organization.activities),
                 selectinload(Organization.building),
             )
-            .where(Organization.name.ilike(f'%{name}%'))
+            .where(Organization.name.ilike(f"%{name}%"))
         )
 
         result = await session.execute(query)
