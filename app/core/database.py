@@ -2,7 +2,7 @@ from typing import AsyncGenerator
 
 from core.config import settings
 from sqlalchemy import MetaData
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 _NAMING_CONVENTION = {
@@ -41,16 +41,10 @@ class DataBaseHalper:
             expire_on_commit=False,
         )
 
-    async def session_getter(self) -> AsyncGenerator:
+    async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
-            try:
+            async with session.begin():
                 yield session
-                await session.commit()
-            except Exception:
-                await session.rollback()
-                raise
-            finally:
-                await session.close()
 
 
 db_helper = DataBaseHalper(
