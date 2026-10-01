@@ -1,84 +1,108 @@
 import asyncio
 
 from core.database import db_helper
-from models import Building, Organization, OrganizationPhone, Activity
+from models import Activity, Building, Organization, OrganizationPhone
 
 
-async def seed():
-    async with db_helper.session_factory() as session:
+async def seed() -> None:
+    async with db_helper.session_factory.begin() as session:
         building1 = Building(
-            address='ул. Блюхера, 32/1',
+            address="ул. Блюхера, 32/1",
             latitude=55.7522,
-            longitude=37.6156
+            longitude=37.6156,
         )
 
         building2 = Building(
-            address='г. Ростов-на-Дону, ул. Ленина 1, офис 3',
+            address="г. Ростов-на-Дону, ул. Ленина 1, офис 3",
             latitude=55.7600,
-            longitude=37.6200
+            longitude=37.6200,
         )
 
         building3 = Building(
-            address='г. Ростов-на-Дону, ул. Текучева 15, офис 15',
+            address="г. Ростов-на-Дону, ул. Текучева 15, офис 15",
             latitude=75.7600,
-            longitude=57.6200
+            longitude=57.6200,
         )
 
         session.add_all([building1, building2, building3])
         await session.flush()
 
-        root_service1 = Activity(name='Еда')
-        meat_product = Activity(name='Мясная продукция', parent=root_service1)
-        dairy_product = Activity(name='Молочная продукция', parent=root_service1)
-        sausage_product = Activity(name='Колбасы', parent=meat_product)
-        type_sausage = Activity(name='Сыро-копченые', parent=sausage_product)
-        sausage = Activity(name='Венская', parent=type_sausage)
+        root_service1 = Activity(name="Еда")
+        meat_product = Activity(
+            name="Мясная продукция",
+            parent=root_service1,
+        )
+        dairy_product = Activity(
+            name="Молочная продукция",
+            parent=root_service1,
+        )
+        sausage_product = Activity(
+            name="Колбасы",
+            parent=meat_product,
+        )
+        type_sausage = Activity(
+            name="Сыро-копченые",
+            parent=sausage_product,
+        )
+        sausage = Activity(
+            name="Венская",
+            parent=type_sausage,
+        )
 
-        root_service2 = Activity(name='Автомобили')
-        freight = Activity(name='Грузовые', parent=root_service2)
+        root_service2 = Activity(
+            name="Автомобили",
+        )
+        freight = Activity(
+            name="Грузовые",
+            parent=root_service2,
+        )
 
-        session.add_all([
-            root_service1,
-            meat_product, dairy_product, sausage_product, type_sausage, sausage,
-            root_service2,
-            freight
-        ])
+        session.add_all(
+            [
+                root_service1,
+                meat_product,
+                dairy_product,
+                sausage_product,
+                type_sausage,
+                sausage,
+                root_service2,
+                freight,
+            ]
+        )
         await session.flush()
 
         org1 = Organization(
-            name='ООО “Рога и Копыта”',
+            name="ООО “Рога и Копыта”",
             building_id=building1.id,
             activities=[meat_product, dairy_product],
             phones=[
-                OrganizationPhone(phone_number='2-222-222'),
-                OrganizationPhone(phone_number='3-333-333'),
-                OrganizationPhone(phone_number='8-923-666-13-13')
-            ]
+                OrganizationPhone(phone_number="2-222-222"),
+                OrganizationPhone(phone_number="3-333-333"),
+                OrganizationPhone(phone_number="8-923-666-13-13"),
+            ],
         )
 
         org2 = Organization(
-            name='Сервис 24',
+            name="Сервис 24",
             building_id=building2.id,
             activities=[freight],
             phones=[
-                OrganizationPhone(phone_number='+7 900 333-33-33'),
-            ]
+                OrganizationPhone(phone_number="+7 900 333-33-33"),
+            ],
         )
 
         org3 = Organization(
-            name='Колбасы',
+            name="Колбасы",
             building_id=building3.id,
             activities=[sausage],
             phones=[
-                OrganizationPhone(phone_number='+7 900 235-33-33'),
-            ]
+                OrganizationPhone(phone_number="+7 900 235-33-33"),
+            ],
         )
 
         session.add_all([org1, org2, org3])
 
-        await session.commit()
-
-    print('База успешно заполнена тестовыми данными!')
+    print("База успешно заполнена тестовыми данными!")
 
 
 if __name__ == "__main__":
