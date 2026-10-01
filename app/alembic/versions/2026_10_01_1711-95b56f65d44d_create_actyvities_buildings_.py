@@ -1,8 +1,8 @@
-"""init tables
+"""create actyvities, buildings, organizations
 
-Revision ID: c2b40cb7f71e
-Revises: 68cb3081bec3
-Create Date: 2025-11-14 09:33:05.564097
+Revision ID: 95b56f65d44d
+Revises: 
+Create Date: 2026-10-01 17:11:36.453610
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c2b40cb7f71e'
-down_revision: Union[str, Sequence[str], None] = '68cb3081bec3'
+revision: str = '95b56f65d44d'
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -25,9 +25,9 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=250), nullable=False),
     sa.Column('parent_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['parent_id'], ['activities.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
+    sa.ForeignKeyConstraint(['parent_id'], ['activities.id'], name=op.f('activities_parent_id_fkey'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id', name=op.f('activities_pkey')),
+    sa.UniqueConstraint('name', name=op.f('uq_activities_name'))
     )
     op.create_index(op.f('ix_activities_id'), 'activities', ['id'], unique=False)
     op.create_table('buildings',
@@ -35,31 +35,31 @@ def upgrade() -> None:
     sa.Column('address', sa.String(length=250), nullable=False),
     sa.Column('latitude', sa.Float(), nullable=False),
     sa.Column('longitude', sa.Float(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('address')
+    sa.PrimaryKeyConstraint('id', name=op.f('buildings_pkey')),
+    sa.UniqueConstraint('address', name=op.f('uq_buildings_address'))
     )
     op.create_index(op.f('ix_buildings_id'), 'buildings', ['id'], unique=False)
     op.create_table('organizations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=150), nullable=False),
     sa.Column('building_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['building_id'], ['buildings.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['building_id'], ['buildings.id'], name=op.f('organizations_building_id_fkey')),
+    sa.PrimaryKeyConstraint('id', name=op.f('organizations_pkey'))
     )
     op.create_index(op.f('ix_organizations_id'), 'organizations', ['id'], unique=False)
     op.create_table('organization_activity',
     sa.Column('organization_id', sa.Integer(), nullable=False),
     sa.Column('activity_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['activity_id'], ['activities.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.PrimaryKeyConstraint('organization_id', 'activity_id')
+    sa.ForeignKeyConstraint(['activity_id'], ['activities.id'], name=op.f('organization_activity_activity_id_fkey')),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name=op.f('organization_activity_organization_id_fkey')),
+    sa.PrimaryKeyConstraint('organization_id', 'activity_id', name=op.f('organization_activity_pkey'))
     )
     op.create_table('organization_phones',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('phone_number', sa.String(length=50), nullable=False),
     sa.Column('organization_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name=op.f('organization_phones_organization_id_fkey')),
+    sa.PrimaryKeyConstraint('id', name=op.f('organization_phones_pkey'))
     )
     # ### end Alembic commands ###
 

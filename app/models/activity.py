@@ -1,29 +1,47 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from core.database import Base
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from .mixins import IdMixin
 from .organization import organization_activity_table
 
 if TYPE_CHECKING:
     from .organization import Organization
 
 
-class Activity(Base):
+class Activity(Base, IdMixin):
     __tablename__ = "activities"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True,
+    )
+    name: Mapped[str] = mapped_column(
+        String(250),
+        nullable=False,
+        unique=True,
+    )
 
-    parent_id: Mapped[int] = mapped_column(ForeignKey("activities.id"), nullable=True)
-    parent: Mapped["Activity"] = relationship(
-        "Activity", remote_side=[id], back_populates="children"
+    parent_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            "activities.id",
+            ondelete="CASCADE",
+        ),
+        nullable=True,
+    )
+
+    parent: Mapped[Optional["Activity"]] = relationship(
+        "Activity",
+        remote_side=[id],
+        back_populates="children",
     )
     children: Mapped[list["Activity"]] = relationship(
-        "Activity", back_populates="parent"
+        "Activity",
+        back_populates="parent",
     )
-
     organizations: Mapped[list["Organization"]] = relationship(
         "Organization",
         secondary=organization_activity_table,
